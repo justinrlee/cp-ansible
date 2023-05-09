@@ -514,3 +514,36 @@
     - "{{kafka_broker_cert_path}}"
     - "{{kafka_broker_key_path}}"
   when: (ssl_provided_keystore_and_truststore | bool)
+
+- name: Create Topics
+  shell: |
+    {{ binary_base_path }}/bin/kafka-topics --bootstrap-server {{ hostvars[inventory_hostname]|confluent.platform.resolve_hostname }}:{{kafka_broker_listeners[kafka_broker_inter_broker_listener_name]['port']}} \
+      --command-config {{kafka_broker.client_config_file}} \
+      --create --if-not-exists \
+      --topic {{ item.name }} \
+      {{ '' if 'partitions' not in item else ' --partitions ' + item.partitions|string }} \
+      {{ '' if 'replication.factor' not in item else ' --replication-factor ' + item['replication.factor']|string }}
+  environment:
+    KAFKA_OPTS: "-Xlog:all=error -XX:+IgnoreUnrecognizedVMOptions {% if kerberos_client_config_file_dest != '/etc/krb5.conf' %}-Djava.security.krb5.conf={{kerberos_client_config_file_dest}}{% endif %}"
+  ignore_errors: true
+  loop: "{{ kafka_broker_topics }}"
+  when: not ( rbac_enabled|bool or kafka_broker_client_secrets_protection_enabled|bool )
+  run_once: true
+  tags:
+    - resource
+
+- name: Configure Topics
+  shell: |
+    {{ binary_base_path }}/bin/kafka-configs --bootstrap-server {{ hostvars[inventory_hostname]|confluent.platform.resolve_hostname }}:{{kafka_broker_listeners[kafka_broker_inter_broker_listener_name]['port']}} \
+      --command-config {{kafka_broker.client_config_file}} \
+      --alter \
+      --topic {{ item.name }} \
+      {% for k in item.config %} --add-config {{ k|string }}={{ item.config[k]|string }} {% endfor %} \
+  environment:
+    KAFKA_OPTS: "-Xlog:all=error -XX:+IgnoreUnrecognizedVMOptions {% if kerberos_client_config_file_dest != '/etc/krb5.conf' %}-Djava.security.krb5.conf={{kerberos_client_config_file_dest}}{% endif %}"
+  ignore_errors: true
+  loop: "{{ kafka_broker_topics|selectattr('config','defined') }}"
+  when: not ( rbac_enabled|bool or kafka_broker_client_secrets_protection_enabled|bool )
+  run_once: true
+  tags:
+    - resource
