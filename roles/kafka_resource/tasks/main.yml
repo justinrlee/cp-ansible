@@ -1,0 +1,5 @@
+---
+- name: Configure Topics
+  include_tasks: topics.yml
+  when: true
+  # TODO make conditional

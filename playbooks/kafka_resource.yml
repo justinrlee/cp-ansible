@@ -1,0 +1,10 @@
+---
+- name: Kafka Resource Provisioning
+  hosts: kafka_broker
+  gather_facts: false
+  tags:
+    - kafka_topic
+  environment: "{{ proxy_env }}"
+  tasks:
+    - import_role:
+        name: kafka_resource
