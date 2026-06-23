@@ -872,7 +872,15 @@ Default:  false
 
 Parameter to increase the number of retries for Metadata Migration API request
 
-Default:  10
+Default:  false
+
+***
+
+### kraft_dynamic_quorum_auto_join
+
+Enable dynamic kraft quorum auto-join
+
+Default:  true
 
 ***
 
