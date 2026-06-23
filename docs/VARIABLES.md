@@ -862,6 +862,14 @@ Default:  /sbin/nologin
 
 ### metadata_migration_retries
 
+Enable dynamic kraft quorum
+
+Default:  false
+
+***
+
+### kraft_dynamic_quorum
+
 Parameter to increase the number of retries for Metadata Migration API request
 
 Default:  10
@@ -873,6 +881,14 @@ Default:  10
 Default controller quorum voters
 
 Default:  "{% for controller_hostname in groups.kafka_controller|default([]) %}{% if loop.index > 1%},{% endif %}{{groups.kafka_controller.index(controller_hostname)|int + 9991}}@{{controller_hostname}}:{{ kafka_controller_listeners['controller']['port'] }}{%endfor%}"
+
+***
+
+### kafka_controller_quorum_bootstrap_servers
+
+Default controller quorum bootstrap servers. Only used with dynamic quorums.
+
+Default:  "{% for controller_hostname in groups.kafka_controller|default([]) %}{% if loop.index > 1%},{% endif %}{{controller_hostname}}:{{ kafka_controller_listeners['controller']['port'] }}{%endfor%}"
 
 ***
 

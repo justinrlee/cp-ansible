@@ -365,8 +365,14 @@ user_login_shell: /sbin/nologin
 ### Parameter to increase the number of retries for Metadata Migration API request
 metadata_migration_retries: 10
 
+### Enable dynamic kraft quorum
+kraft_dynamic_quorum: false
+
 ### Default controller quorum voters
 kafka_controller_quorum_voters: "{% for controller_hostname in groups.kafka_controller|default([]) %}{% if loop.index > 1%},{% endif %}{{groups.kafka_controller.index(controller_hostname)|int + 9991}}@{{controller_hostname}}:{{ kafka_controller_listeners['controller']['port'] }}{%endfor%}"
+
+### Default controller quorum bootstrap servers. Only used with dynamic quorums.
+kafka_controller_quorum_bootstrap_servers: "{% for controller_hostname in groups.kafka_controller|default([]) %}{% if loop.index > 1%},{% endif %}{{controller_hostname}}:{{ kafka_controller_listeners['controller']['port'] }}{%endfor%}"
 
 ### Default Kafka config prefix. Only valid to customize when installation_method: archive
 kafka_controller_config_prefix: "{{ config_prefix }}/controller"
