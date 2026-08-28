@@ -366,7 +366,10 @@ user_login_shell: /sbin/nologin
 metadata_migration_retries: 10
 
 ### Default controller quorum voters
-kafka_controller_quorum_voters: "{% for controller_hostname in groups.kafka_controller|default([]) %}{% if loop.index > 1%},{% endif %}{{groups.kafka_controller.index(controller_hostname)|int + 9991}}@{{controller_hostname}}:{{ kafka_controller_listeners['controller']['port'] }}{%endfor%}"
+kafka_controller_quorum_voters: "{% for controller_hostname in groups.kafka_controller|default([]) %}{% if loop.index > 1%},{% endif %}{{ hostvars[controller_hostname]['node_id'] }}@{{ controller_hostname }}:{{ hostvars[controller_hostname]['kafka_controller_port'] }}{%endfor%}"
+
+### Default broker quorum voters. Is often, but not strightly necessarily, the same as kafka_controller_quorum_voters
+kafka_broker_quorum_voters: "{% for controller_hostname in groups.kafka_controller|default([]) %}{% if loop.index > 1%},{% endif %}{{ hostvars[controller_hostname]['node_id'] }}@{{ controller_hostname }}:{{ hostvars[controller_hostname]['kafka_controller_port'] }}{%endfor%}"
 
 ### Default Kafka config prefix. Only valid to customize when installation_method: archive
 kafka_controller_config_prefix: "{{ config_prefix }}/controller"
