@@ -256,7 +256,7 @@ kafka_connect_replicator_monitoring_interceptor_erp_third_party_oauth_client_ass
   interceptor_erp: "{{ (kafka_connect_replicator_monitoring_interceptor_erp_third_party_oauth_client_assertion_file_base_path != 'none') | ternary(kafka_connect_replicator_monitoring_interceptor_erp_third_party_oauth_client_assertion_file_base_path ~ '/erp_interceptor.jwt', 'none') }}"
 
 #### Kafka controller variables
-kafka_controller_service_name: "confluent-kcontroller"
+kafka_controller_default_service_name: "confluent-kcontroller"
 kafka_controller_main_package: "{{ 'confluent-server' if confluent_server_enabled|bool else 'confluent-kafka'}}"
 kafka_controller_default_group: confluent
 kafka_controller_default_user: cp-kafka
@@ -563,7 +563,7 @@ kafka_controller_default_client_properties: "{{ kafka_controller_listeners['cont
 kafka_controller_client_properties: "{{ kafka_controller_default_client_properties | combine(kafka_controller_custom_client_properties) }}"
 
 #### Kafka Broker Variables ####
-kafka_broker_service_name: "{{ 'confluent-server' if confluent_server_enabled|bool else 'confluent-kafka'}}"
+kafka_broker_default_service_name: "{{ 'confluent-server' if confluent_server_enabled|bool else 'confluent-kafka'}}"
 kafka_broker_main_package: "{{ 'confluent-server' if confluent_server_enabled|bool else 'confluent-kafka'}}"
 kafka_broker_default_user: cp-kafka
 kafka_broker_default_group: confluent

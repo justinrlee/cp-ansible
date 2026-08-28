@@ -401,6 +401,9 @@ kafka_controller_sasl_protocol: "{{sasl_protocol}}"
 # Uses custom filter to create a list of all sasl_protocols, removes ['none'], and reduces to unique items
 kafka_controller_sasl_enabled_mechanisms: "{{ kafka_controller_listeners | confluent.platform.get_sasl_mechanisms(kafka_controller_sasl_protocol) | difference(['none']) | unique }}"
 
+### Customize the systemd service name used for the controller
+kafka_controller_service_name: "{{kafka_controller_default_service_name}}"
+
 ### Set this variable to customize the Linux User that the Kafka controller Service runs with. Default user is cp-kafka.
 kafka_controller_user: "{{kafka_controller_default_user}}"
 
@@ -571,6 +574,9 @@ kafka_broker_inter_broker_listener_name: "{{ 'broker' if kafka_broker_configure_
 # TODO move this var into vars
 # Uses custom filter to create a list of all sasl_protocols, removes ['none'], and reduces to unique items
 kafka_broker_sasl_enabled_mechanisms: "{{ kafka_broker_listeners | confluent.platform.get_sasl_mechanisms(sasl_protocol) | difference(['none']) | unique }}"
+
+### Customize the systemd service name used for the broker
+kafka_broker_service_name: "{{kafka_broker_default_service_name}}"
 
 ### Set this variable to customize the Linux User that the Kafka Broker Service runs with. Default user is cp-kafka.
 kafka_broker_user: "{{kafka_broker_default_user}}"
