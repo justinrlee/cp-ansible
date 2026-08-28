@@ -151,6 +151,18 @@
     - systemd
     - privileged
 
+- name: Copy Kafka broker Service when not default
+  copy:
+    src: "{{ (systemd_base_dir, {{kafka_broker_default_service_name}} | path_join }}.service"
+    remote_src: true
+    dest: "{{kafka_broker.systemd_file}}"
+    mode: '644'
+    force: true
+  when: kafka_broker_default_service_name != kafka_broker_service_name
+  tags:
+    - systemd
+    - privileged
+
 - include_role:
     name: ssl
   vars:
